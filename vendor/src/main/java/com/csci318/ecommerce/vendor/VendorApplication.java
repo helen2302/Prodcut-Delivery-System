@@ -3,6 +3,8 @@ import com.csci318.ecommerce.vendor.model.Product;
 import com.csci318.ecommerce.vendor.model.Vendor;
 import com.csci318.ecommerce.vendor.repository.ProductRepository;
 import com.csci318.ecommerce.vendor.repository.VendorRepository;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.boot.CommandLineRunner;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,6 +13,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Properties;
 
 @SpringBootApplication
 public class VendorApplication { 
@@ -27,7 +31,6 @@ public class VendorApplication {
 	@Bean
 	public CommandLineRunner loadDatabase(VendorRepository vendorRepository, ProductRepository productRepository) throws Exception {
 		return args -> {
-// First Vendor with products
 			Vendor vendor1 = new Vendor();
 			vendor1.setName("Tech Supplies Co.");
 			vendor1.setAddress("123 Tech Ave, Silicon Valley, CA");

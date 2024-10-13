@@ -53,4 +53,11 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+    @PostMapping("/feedback")
+    public ResponseEntity<String> sendFeedback(@RequestParam Long productId,
+                                               @RequestParam int rating) {
+        // Send the feedback using the service
+        productService.sendFeedback(productId, rating);
+        return ResponseEntity.ok("Feedback sent successfully");
+    }
 }

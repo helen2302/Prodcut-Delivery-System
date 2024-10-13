@@ -1,10 +1,12 @@
 package com.csci318.ecommerce.vendor.service;
+import com.csci318.ecommerce.vendor.model.FeedbackReceivedEvent;
 import com.csci318.ecommerce.vendor.model.Product;
 import com.csci318.ecommerce.vendor.model.Vendor;
 import com.csci318.ecommerce.vendor.repository.ProductRepository;
 import com.csci318.ecommerce.vendor.repository.VendorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -19,8 +21,8 @@ public class ProductService {
     private VendorRepository vendorRepository;
     @Autowired
     private ProductRepository productRepository;
-
-
+    @Autowired
+    private KafkaTemplate<Long, FeedbackReceivedEvent> feedbackKafkaTemplate;
 
     // Create a product
     public Product createProduct(Product product, Long vendorId) {
@@ -82,6 +84,15 @@ public class ProductService {
         Product product = productOptional.get();
         product.setInStock(product.getInStock() + 1); // Increase stock by 1
         productRepository.save(product);
+    }
+
+
+    public void sendFeedback(Long productId, int rating) {
+        FeedbackReceivedEvent feedback = new FeedbackReceivedEvent();
+        feedback.setProductId(productId);
+        feedback.setRating(rating);
+
+        feedbackKafkaTemplate.send("feedback-topic", productId, feedback); // Use productId as key if needed
     }
 
 }
